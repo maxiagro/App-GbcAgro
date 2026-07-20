@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#2B2420" />
+<title>Campo App</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+  :root{
+    --soil:#2B2420;
+    --soil-light:#3a3226;
+    --parchment:#F2EDE3;
+    --parchment-dim:#c9c2b3;
+    --wheat:#D4A73A;
+    --growth:#6B8F47;
+    --growth-dim:#4d6a34;
+    --rust:#B5533C;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--soil);color:var(--parchment);
+    min-height:100vh;padding-bottom:76px;
+  }
+  .surco{
+    background-image:repeating-linear-gradient(115deg, var(--soil-light) 0px, var(--soil-light) 18px, transparent 18px, transparent 36px);
+  }
+  header.top{
+    padding:22px 18px 16px;
+    display:flex;align-items:baseline;justify-content:space-between;
+  }
+  header.top h1{
+    margin:0;font-size:22px;letter-spacing:0.5px;font-weight:800;
+    text-transform:uppercase;
+  }
+  header.top h1 span{color:var(--wheat);}
+  header.top .sub{font-size:11px;color:var(--parchment-dim);letter-spacing:1px;text-transform:uppercase;}
+  main{padding:0 14px 14px;max-width:640px;margin:0 auto;}
+  .card{
+    background:var(--soil-light);border-radius:var(--radius);
+    padding:16px;margin-bottom:12px;border:1px solid rgba(212,167,58,0.12);
+  }
+  .card h3{margin:0 0 10px;font-size:15px;color:var(--wheat);letter-spacing:0.3px;}
+  label{display:block;font-size:11px;color:var(--parchment-dim);margin:10px 0 4px;text-transform:uppercase;letter-spacing:0.5px;}
+  input,select{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(242,237,227,0.15);
+    background:#211b17;color:var(--parchment);font-size:15px;
+  }
+  input:focus,select:focus{outline:2px solid var(--wheat);}
+  .row{display:flex;gap:8px;}
+  .row > *{flex:1;}
+  button{
+    font-family:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 16px;
+    font-size:14px;cursor:pointer;letter-spacing:0.3px;
+  }
+  .btn-primary{background:var(--growth);color:#fff;}
+  .btn-primary:active{background:var(--growth-dim);}
+  .btn-ghost{background:transparent;border:1px solid var(--parchment-dim);color:var(--parchment);}
+  .btn-danger{background:transparent;color:var(--rust);border:1px solid var(--rust);}
+  .btn-gold{background:var(--wheat);color:#2B2420;}
+  .producto-line{
+    display:flex;gap:6px;align-items:center;background:#211b17;padding:8px;border-radius:10px;margin-bottom:6px;
+  }
+  .producto-line input{padding:8px;font-size:13px;}
+  .mono{font-variant-numeric:tabular-nums;}
+  .pedido-item{border-bottom:1px solid rgba(242,237,227,0.08);padding:10px 0;}
+  .pedido-item:last-child{border-bottom:none;}
+  .pedido-item .top-row{display:flex;justify-content:space-between;font-size:14px;font-weight:700;}
+  .pedido-item .meta{font-size:12px;color:var(--parchment-dim);margin-top:2px;}
+  .pedido-item .costo{color:var(--wheat);font-weight:800;}
+  .empty{
+    text-align:center;padding:30px 10px;color:var(--parchment-dim);font-size:13px;
+  }
+  nav.bottom{
+    position:fixed;bottom:0;left:0;right:0;background:var(--soil-light);
+    border-top:1px solid rgba(212,167,58,0.15);
+    display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index:10;
+  }
+  nav.bottom button{
+    flex:1;background:transparent;color:var(--parchment-dim);font-size:11px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;
+    text-transform:uppercase;letter-spacing:0.4px;
+  }
+  nav.bottom button.active{color:var(--wheat);}
+  nav.bottom .ico{font-size:19px;}
+  .balance-total{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 16px;background:var(--wheat);color:#2B2420;border-radius:var(--radius);
+    margin-bottom:12px;
+  }
+  .balance-total .num{font-size:22px;font-weight:800;}
+  .badge{
+    display:inline-block;background:rgba(107,143,71,0.2);color:var(--growth);
+    font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;
+  }
+  .toast{
+    position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+    background:var(--growth);color:#fff;padding:10px 18px;border-radius:20px;
+    font-size:13px;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  }
+  .offline-dot{
+    width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+const STORAGE_KEY = "agro_v2";
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { establecimientos: [], pedidos: [] };
+}
+function saveState(state){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmtUSD(n){
+  return "US$ " + (Math.round((n + Number.EPSILON) * 100) / 100).toLocaleString("es-AR", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function Toast({msg}){
+  if(!msg) return null;
+  return <div className="toast">{msg}</div>;
+}
+
+function App(){
+  const [state, setState] = useState(loadState());
+  const [tab, setTab] = useState("pedidos");
+  const [toast, setToast] = useState("");
+  const [online, setOnline] = useState(navigator.onLine);
+
+  useEffect(() => { saveState(state); }, [state]);
+
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+    }
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+
+  function flash(msg){
+    setToast(msg);
+    setTimeout(() => setToast(""), 2200);
+  }
+
+  function addEstablecimiento(nombre){
+    if(!nombre.trim()) return;
+    setState(s => ({...s, establecimientos: [...s.establecimientos, {id: uid(), nombre: nombre.trim()}]}));
+    flash("Establecimiento agregado");
+  }
+  function removeEstablecimiento(id){
+    setState(s => ({...s, establecimientos: s.establecimientos.filter(e => e.id !== id)}));
+  }
+  function addPedido(pedido){
+    setState(s => ({...s, pedidos: [pedido, ...s.pedidos]}));
+    flash("Pedido guardado");
+  }
+  function removePedido(id){
+    setState(s => ({...s, pedidos: s.pedidos.filter(p => p.id !== id)}));
+  }
+
+  return (
+    <div>
+      <header className="top">
+        <div>
+          <h1>Campo<span>App</span></h1>
+          <div className="sub">
+            <span className="offline-dot" style={{background: online ? "#6B8F47" : "#B5533C"}}></span>
+            {online ? "Conectado" : "Sin conexión — trabajando local"}
+          </div>
+        </div>
+      </header>
+      <main>
+        {tab === "pedidos" && <Pedidos state={state} addPedido={addPedido} removePedido={removePedido} />}
+        {tab === "balance" && <Balance state={state} />}
+        {tab === "config" && <Config state={state} addEstablecimiento={addEstablecimiento} removeEstablecimiento={removeEstablecimiento} />}
+      </main>
+      <Toast msg={toast} />
+      <nav className="bottom">
+        <button className={tab==="pedidos"?"active":""} onClick={()=>setTab("pedidos")}>
+          <span className="ico">📋</span>Pedidos
+        </button>
+        <button className={tab==="balance"?"active":""} onClick={()=>setTab("balance")}>
+          <span className="ico">💰</span>Balance
+        </button>
+        <button className={tab==="config"?"active":""} onClick={()=>setTab("config")}>
+          <span className="ico">⚙️</span>Campos
+        </button>
+      </nav>
+    </div>
+  );
+}
+
+function Config({state, addEstablecimiento, removeEstablecimiento}){
+  const [nombre, setNombre] = useState("");
+  return (
+    <div>
+      <div className="card">
+        <h3>Nuevo establecimiento</h3>
+        <label>Nombre</label>
+        <div className="row">
+          <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Ej: Ballesteros" />
+        </div>
+        <div style={{marginTop:10}}>
+          <button className="btn-primary" onClick={()=>{ addEstablecimiento(nombre); setNombre(""); }}>Agregar</button>
+        </div>
+      </div>
+      <div className="card">
+        <h3>Establecimientos ({state.establecimientos.length})</h3>
+        {state.establecimientos.length === 0 && <div className="empty">Todavía no cargaste ninguno</div>}
+        {state.establecimientos.map(e => (
+          <div key={e.id} className="pedido-item" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <span>{e.nombre}</span>
+            <button className="btn-danger" onClick={()=>removeEstablecimiento(e.id)}>Borrar</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProductoForm({productos, setProductos}){
+  function updateProd(i, field, val){
+    const next = [...productos];
+    next[i] = {...next[i], [field]: val};
+    setProductos(next);
+  }
+  function addProd(){
+    setProductos([...productos, {nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+  }
+  function removeProd(i){
+    setProductos(productos.filter((_,idx)=>idx!==i));
+  }
+  return (
+    <div>
+      <label>Productos aplicados</label>
+      {productos.map((p, i) => (
+        <div key={i} className="producto-line">
+          <input placeholder="Producto" value={p.nombre} onChange={e=>updateProd(i,"nombre",e.target.value)} style={{flex:2}} />
+          <input placeholder="Dosis/ha" type="number" value={p.dosis} onChange={e=>updateProd(i,"dosis",e.target.value)} style={{flex:1}} />
+          <select value={p.unidad} onChange={e=>updateProd(i,"unidad",e.target.value)} style={{flex:1}}>
+            <option>l/ha</option><option>kg/ha</option><option>cc/ha</option><option>g/ha</option>
+          </select>
+          <input placeholder="US$/u" type="number" value={p.precio} onChange={e=>updateProd(i,"precio",e.target.value)} style={{flex:1}} />
+          <button className="btn-danger" style={{padding:"6px 10px"}} onClick={()=>removeProd(i)}>✕</button>
+        </div>
+      ))}
+      <button className="btn-ghost" onClick={addProd}>+ Agregar producto</button>
+    </div>
+  );
+}
+
+function Pedidos({state, addPedido, removePedido}){
+  const today = new Date().toISOString().slice(0,10);
+  const [fecha, setFecha] = useState(today);
+  const [establecimientoId, setEstablecimientoId] = useState(state.establecimientos[0]?.id || "");
+  const [lote, setLote] = useState("");
+  const [hectareas, setHectareas] = useState("");
+  const [productos, setProductos] = useState([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+
+  const costoTotal = useMemo(() => {
+    const ha = parseFloat(hectareas) || 0;
+    return productos.reduce((acc,p) => acc + (parseFloat(p.dosis)||0) * (parseFloat(p.precio)||0) * ha, 0);
+  }, [productos, hectareas]);
+
+  function guardar(){
+    if(!establecimientoId || !hectareas){ alert("Completá establecimiento y hectáreas"); return; }
+    const est = state.establecimientos.find(e => e.id === establecimientoId);
+    const ha = parseFloat(hectareas) || 0;
+    addPedido({
+      id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
+      lote, hectareas: ha, productos: productos.filter(p=>p.nombre),
+      costoTotal, costoPorHa: ha ? costoTotal/ha : 0
+    });
+    setLote(""); setHectareas(""); setProductos([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+  }
+
+  function exportarWhatsapp(p){
+    let txt = `*Pedido ${p.establecimientoNombre}${p.lote ? " - Lote " + p.lote : ""}*\n`;
+    txt += `📅 ${p.fecha}  |  ${p.hectareas} ha\n\n`;
+    p.productos.forEach(prod => {
+      txt += `• ${prod.nombre}: ${prod.dosis} ${prod.unidad} — US$ ${prod.precio}/u\n`;
+    });
+    txt += `\n💰 Total: ${fmtUSD(p.costoTotal)}\n📐 Por ha: ${fmtUSD(p.costoPorHa)}`;
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
+  }
+
+  return (
+    <div>
+      <div className="card">
+        <h3>Nuevo pedido</h3>
+        {state.establecimientos.length === 0 ? (
+          <div className="empty">Cargá primero un establecimiento en la pestaña Campos</div>
+        ) : (
+          <div>
+            <div className="row">
+              <div>
+                <label>Fecha</label>
+                <input type="date" value={fecha} onChange={e=>setFecha(e.target.value)} />
+              </div>
+              <div>
+                <label>Hectáreas</label>
+                <input type="number" value={hectareas} onChange={e=>setHectareas(e.target.value)} placeholder="0" />
+              </div>
+            </div>
+            <div className="row">
+              <div>
+                <label>Establecimiento</label>
+                <select value={establecimientoId} onChange={e=>setEstablecimientoId(e.target.value)}>
+                  {state.establecimientos.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}
+                </select>
+              </div>
+              <div>
+                <label>Lote (opcional)</label>
+                <input value={lote} onChange={e=>setLote(e.target.value)} placeholder="Ej: 3" />
+              </div>
+            </div>
+            <div style={{marginTop:4}}>
+              <ProductoForm productos={productos} setProductos={setProductos} />
+            </div>
+            <div className="balance-total" style={{marginTop:12}}>
+              <span>Costo total</span>
+              <span className="num mono">{fmtUSD(costoTotal)}</span>
+            </div>
+            <button className="btn-primary" style={{width:"100%"}} onClick={guardar}>Guardar pedido</button>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <h3>Historial ({state.pedidos.length})</h3>
+        {state.pedidos.length === 0 && <div className="empty">Todavía no hay pedidos cargados</div>}
+        {state.pedidos.map(p => (
+          <div key={p.id} className="pedido-item">
+            <div className="top-row">
+              <span>{p.establecimientoNombre}{p.lote ? " · L" + p.lote : ""}</span>
+              <span className="costo mono">{fmtUSD(p.costoTotal)}</span>
+            </div>
+            <div className="meta">{p.fecha} · {p.hectareas} ha · {p.productos.length} producto(s)</div>
+            <div className="row" style={{marginTop:8}}>
+              <button className="btn-ghost" onClick={()=>exportarWhatsapp(p)}>Enviar por WhatsApp</button>
+              <button className="btn-danger" onClick={()=>removePedido(p.id)}>Borrar</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Balance({state}){
+  const porEstablecimiento = useMemo(() => {
+    const map = {};
+    state.pedidos.forEach(p => {
+      if(!map[p.establecimientoNombre]) map[p.establecimientoNombre] = {total:0, ha:0, pedidos:0};
+      map[p.establecimientoNombre].total += p.costoTotal;
+      map[p.establecimientoNombre].ha += p.hectareas;
+      map[p.establecimientoNombre].pedidos += 1;
+    });
+    return map;
+  }, [state.pedidos]);
+
+  const totalGeneral = state.pedidos.reduce((a,p)=>a+p.costoTotal, 0);
+
+  return (
+    <div>
+      <div className="balance-total">
+        <span>Total general</span>
+        <span className="num mono">{fmtUSD(totalGeneral)}</span>
+      </div>
+      <div className="card">
+        <h3>Por establecimiento</h3>
+        {Object.keys(porEstablecimiento).length === 0 && <div className="empty">Sin datos todavía</div>}
+        {Object.entries(porEstablecimiento).map(([nombre, d]) => (
+          <div key={nombre} className="pedido-item">
+            <div className="top-row">
+              <span>{nombre}</span>
+              <span className="costo mono">{fmtUSD(d.total)}</span>
+            </div>
+            <div className="meta">{d.pedidos} pedido(s) · {d.ha} ha · {fmtUSD(d.ha ? d.total/d.ha : 0)}/ha</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
