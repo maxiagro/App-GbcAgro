@@ -231,7 +231,7 @@ function EstablecimientoRow({e, removeEstablecimiento, addSocio, removeSocio}){ 
         <h3>Establecimientos ({state.establecimientos.length})</h3>
         {state.establecimientos.length === 0 && <div className="empty">Todavía no cargaste ninguno</div>}
         {state.establecimientos.map(e => (
-          <div className="sub" style={{marginBottom:10}}>Los aportantes son opcionales — cargalos solo en los campos de la sociedad Franceschina (Abel y Nelson)</div>         {state.establecimientos.map(e => (           <EstablecimientoRow key={e.id} e={e} removeEstablecimiento={removeEstablecimiento} addSocio={addSocio} removeSocio={removeSocio} />         ))}
+        <div className="sub" style={{marginBottom:10}}>Los aportantes son opcionales — cargalos solo en los campos de la sociedad Franceschina (Abel y Nelson)</div>         {state.establecimientos.map(e => (           <EstablecimientoRow key={e.id} e={e} removeEstablecimiento={removeEstablecimiento} addSocio={addSocio} removeSocio={removeSocio} />         ))}
             <span>{e.nombre}</span>
             <button className="btn-danger" onClick={()=>removeEstablecimiento(e.id)}>Borrar</button>
           </div>
