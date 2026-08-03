@@ -195,7 +195,7 @@ function App(){
       <main>
         {tab === "pedidos" && <Pedidos state={state} addPedido={addPedido} removePedido={removePedido} />}
         {tab === "balance" && <Balance state={state} />}
-        {tab === "config" && <Config state={state} addEstablecimiento={addEstablecimiento} removeEstablecimiento={removeEstablecimiento} />}
+        {tab === "config" && <Config state={state} addEstablecimiento={addEstablecimiento} removeEstablecimiento={removeEstablecimiento} addSocio={addSocio} removeSocio={removeSocio} />}
       </main>
       <Toast msg={toast} />
       <nav className="bottom">
