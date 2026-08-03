@@ -213,7 +213,7 @@ function App(){
   );
 }
 
-function Config({state, addEstablecimiento, removeEstablecimiento}){
+function EstablecimientoRow({e, removeEstablecimiento, addSocio, removeSocio}){   const [nombreSocio, setNombreSocio] = useState("");   const [porcentaje, setPorcentaje] = useState("");   const socios = e.socios || [];   return (     <div className="pedido-item">       <div className="top-row">         <span>{e.nombre}</span>         <button className="btn-danger" onClick={()=>removeEstablecimiento(e.id)}>Borrar</button>       </div>       {socios.length > 0 && (         <div style={{marginTop:8}}>           {socios.map(so => (             <div key={so.id} className="row" style={{alignItems:"center",marginBottom:4}}>               <span style={{flex:1}}>{so.nombre} · {so.porcentaje}%</span>               <button className="btn-danger" style={{padding:"4px 8px"}} onClick={()=>removeSocio(e.id, so.id)}>✕</button>             </div>           ))}         </div>       )}       <div className="row" style={{marginTop:8}}>         <input value={nombreSocio} onChange={ev=>setNombreSocio(ev.target.value)} placeholder="Aportante (ej: Abel)" />         <input value={porcentaje} onChange={ev=>setPorcentaje(ev.target.value)} placeholder="%" type="number" style={{maxWidth:70}} />         <button className="btn-ghost" onClick={()=>{ addSocio(e.id, nombreSocio, porcentaje); setNombreSocio(""); setPorcentaje(""); }}>+ Aportante</button>       </div>     </div>   ); }  function Config({state, addEstablecimiento, removeEstablecimiento, addSocio, removeSocio}){
   const [nombre, setNombre] = useState("");
   return (
     <div>
