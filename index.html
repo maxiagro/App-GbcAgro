@@ -115,8 +115,10 @@
 
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script> 
+<script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf-autotable.min.js"></script>
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo } = React;
 const STORAGE_KEY = "agro_v2";
@@ -285,6 +287,7 @@ function Pedidos({state, addPedido, removePedido}){
   const [fecha, setFecha] = useState(today);
   const [establecimientoId, setEstablecimientoId] = useState(state.establecimientos[0]?.id || "");
   const [lote, setLote] = useState("");
+  const [observacion, setObservacion] = useState("");
   const [hectareas, setHectareas] = useState("");
   const [productos, setProductos] = useState([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
 
@@ -299,12 +302,62 @@ function Pedidos({state, addPedido, removePedido}){
     const ha = parseFloat(hectareas) || 0;
     addPedido({
       id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
-      lote, hectareas: ha, productos: productos.filter(p=>p.nombre),
+      lote, observacion, hectareas: ha, productos: productos.filter(p=>p.nombre),
       costoTotal, costoPorHa: ha ? costoTotal/ha : 0
     });
-    setLote(""); setHectareas(""); setProductos([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+    setLote(""); setObservacion(""); setHectareas(""); setProductos([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
   }
 
+ function exportarPDF(p){
+    const doc = new window.jspdf.jsPDF();
+    doc.setFillColor(43, 36, 32);
+    doc.rect(0, 0, 210, 24, "F");
+    doc.setTextColor(242, 237, 227);
+    doc.setFontSize(20);
+    doc.setFont(undefined, "bold");
+    doc.text("GBC AGRO", 14, 15);
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+    doc.text("Orden de Aplicación", 14, 21);
+
+    doc.setTextColor(20, 20, 20);
+    let y = 34;
+    doc.setFontSize(11);
+    doc.setFont(undefined, "bold"); doc.text("Lote:", 14, y);
+    doc.setFont(undefined, "normal"); doc.text(`${p.establecimientoNombre}${p.lote ? " - Lote " + p.lote : ""}`, 38, y);
+    y += 7;
+    doc.setFont(undefined, "bold"); doc.text("Has:", 14, y);
+    doc.setFont(undefined, "normal"); doc.text(`${p.hectareas}`, 38, y);
+    y += 7;
+    if(p.observacion){
+      doc.setFont(undefined, "bold"); doc.text("Observación:", 14, y);
+      doc.setFont(undefined, "normal"); doc.text(p.observacion, 42, y);
+      y += 7;
+    }
+    doc.setFont(undefined, "bold"); doc.text("Fecha:", 14, y);
+    doc.setFont(undefined, "normal"); doc.text(p.fecha.split("-").reverse().join("/"), 38, y);
+    y += 10;
+
+    const rows = p.productos.map((prod, i) => [
+      (i+1) + "°",
+      prod.nombre,
+      prod.dosis,
+      prod.unidad,
+      ((parseFloat(prod.dosis)||0) * (p.hectareas||0)).toFixed(2)
+    ]);
+
+    doc.autoTable({
+      startY: y,
+      head: [["N°", "Producto", "Dosis", "Unidad", "Total"]],
+      body: rows,
+      headStyles: { fillColor: [212, 167, 58], textColor: [43,36,32] },
+      styles: { fontSize: 10 },
+      margin: { left: 14, right: 14 }
+    });
+
+    doc.save(`Orden_${p.establecimientoNombre}${p.lote ? "_L"+p.lote : ""}_${p.fecha}.pdf`);
+  }
+  
   function exportarWhatsapp(p){
     let txt = `*Pedido ${p.establecimientoNombre}${p.lote ? " - Lote " + p.lote : ""}*\n`;
     txt += `📅 ${p.fecha}  |  ${p.hectareas} ha\n\n`;
@@ -343,6 +396,8 @@ function Pedidos({state, addPedido, removePedido}){
               <div>
                 <label>Lote (opcional)</label>
                 <input value={lote} onChange={e=>setLote(e.target.value)} placeholder="Ej: 3" />
+                <label style={{marginTop:8, display:"block"}}>Observación (opcional)</label>
+                <input value={observacion} onChange={e=>setObservacion(e.target.value)} placeholder="Ej: barbecho soja 1°" />
               </div>
             </div>
             <div style={{marginTop:4}}>
@@ -368,6 +423,7 @@ function Pedidos({state, addPedido, removePedido}){
             </div>
             <div className="meta">{p.fecha} · {p.hectareas} ha · {p.productos.length} producto(s)</div>
             <div className="row" style={{marginTop:8}}>
+              <button className="btn-ghost" onClick={()=>exportarPDF(p)}>Exportar PDF</button>
               <button className="btn-ghost" onClick={()=>exportarWhatsapp(p)}>Enviar por WhatsApp</button>
               <button className="btn-danger" onClick={()=>removePedido(p.id)}>Borrar</button>
             </div>
