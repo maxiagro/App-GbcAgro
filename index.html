@@ -346,7 +346,7 @@ function guardar(){
     doc.text("GBC AGRO", 14, 15);
     doc.setFontSize(10);
     doc.setFont(undefined, "normal");
-    doc.text("Orden de Aplicación", 14, 21);
+   doc.text(p.tipoLabor === "siembra" ? "Orden de Siembra" : "Orden de Aplicación", 14, 21);
 
     doc.setTextColor(20, 20, 20);
     let y = 34;
