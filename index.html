@@ -118,7 +118,7 @@
 
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script> 
-<script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf-autotable.min.js"></script>
+
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo } = React;
 const STORAGE_KEY = "agro_v2";
@@ -338,23 +338,30 @@ function Pedidos({state, addPedido, removePedido}){
     doc.setFont(undefined, "normal"); doc.text(p.fecha.split("-").reverse().join("/"), 38, y);
     y += 10;
 
-    const rows = p.productos.map((prod, i) => [
-      (i+1) + "°",
-      prod.nombre,
-      prod.dosis,
-      prod.unidad,
-      ((parseFloat(prod.dosis)||0) * (p.hectareas||0)).toFixed(2)
-    ]);
+    const headers = ["N°", "Producto", "Dosis", "Unidad", "Total"];
+    const colX = [14, 28, 95, 130, 160];
 
-    doc.autoTable({
-      startY: y,
-      head: [["N°", "Producto", "Dosis", "Unidad", "Total"]],
-      body: rows,
-      headStyles: { fillColor: [212, 167, 58], textColor: [43,36,32] },
-      styles: { fontSize: 10 },
-      margin: { left: 14, right: 14 }
+    doc.setFillColor(212, 167, 58);
+    doc.rect(14, y, 182, 8, "F");
+    doc.setTextColor(43, 36, 32);
+    doc.setFontSize(10);
+    doc.setFont(undefined, "bold");
+    headers.forEach((h, i) => doc.text(h, colX[i] + 2, y + 5.5));
+    y += 8;
+
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(20, 20, 20);
+    p.productos.forEach((prod, i) => {
+      const total = ((parseFloat(prod.dosis)||0) * (p.hectareas||0)).toFixed(2);
+      const vals = [(i+1) + "°", prod.nombre, String(prod.dosis), prod.unidad, total];
+      if(i % 2 === 1){
+        doc.setFillColor(242, 237, 227);
+        doc.rect(14, y, 182, 7, "F");
+        doc.setTextColor(20, 20, 20);
+      }
+      vals.forEach((v, j) => doc.text(String(v), colX[j] + 2, y + 5));
+      y += 7;
     });
-
     doc.save(`Orden_${p.establecimientoNombre}${p.lote ? "_L"+p.lote : ""}_${p.fecha}.pdf`);
   }
   
