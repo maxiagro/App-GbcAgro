@@ -520,7 +520,7 @@ if(p.tipoLabor === "siembra"){
               <span>{p.establecimientoNombre}{p.lote ? " · L" + p.lote : ""}</span>
               <span className="costo mono">{fmtUSD(p.costoTotal)}</span>
             </div>
-            <div className="meta">{p.fecha} · {p.hectareas} ha · {p.productos.length} producto(s)</div>
+           <div className="meta">{p.fecha} · {p.hectareas} ha · {p.tipoLabor === "siembra" ? (p.siembra?.variedad || "Siembra") : `${p.productos.length} producto(s)`}</div>
             <div className="row" style={{marginTop:8}}>
               <button className="btn-ghost" onClick={()=>exportarPDF(p)}>Exportar PDF</button>
               <button className="btn-ghost" onClick={()=>exportarWhatsapp(p)}>Enviar por WhatsApp</button>
