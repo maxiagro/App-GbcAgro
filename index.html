@@ -303,8 +303,29 @@ function Pedidos({state, addPedido, removePedido}){
     return productos.reduce((acc,p) => acc + (parseFloat(p.dosis)||0) * (parseFloat(p.precio)||0) * ha, 0);
   }, [productos, hectareas]);
 
-  function guardar(){
+function guardar(){
     if(!establecimientoId || !hectareas){ alert("Completá establecimiento y hectáreas"); return; }
+    const est = state.establecimientos.find(e => e.id === establecimientoId);
+    const ha = parseFloat(hectareas) || 0;
+    if(tipoLabor === "siembra"){
+      addPedido({
+        id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
+        lote, observacion, hectareas: ha, tipoLabor: "siembra",
+        productos: [], costoTotal: 0, costoPorHa: 0,
+        siembra: { variedad, densidad, densidadUnidad, fertilizante, kgFertilizante, inoculante, insecticida }
+      });
+      setVariedad(""); setDensidad(""); setFertilizante(""); setKgFertilizante(""); setInoculante(""); setInsecticida("");
+    } else {
+      addPedido({
+        id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
+        lote, observacion, hectareas: ha, tipoLabor: "aplicacion",
+        productos: productos.filter(p=>p.nombre),
+        costoTotal, costoPorHa: ha ? costoTotal/ha : 0
+      });
+      setProductos([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+    }
+    setLote(""); setObservacion(""); setHectareas("");
+  }
     const est = state.establecimientos.find(e => e.id === establecimientoId);
     const ha = parseFloat(hectareas) || 0;
     addPedido({
