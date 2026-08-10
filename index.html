@@ -365,31 +365,50 @@ function guardar(){
     doc.setFont(undefined, "bold"); doc.text("Fecha:", 14, y);
     doc.setFont(undefined, "normal"); doc.text(p.fecha.split("-").reverse().join("/"), 38, y);
     y += 10;
+if(p.tipoLabor === "siembra"){
+      const s = p.siembra || {};
+      const filas = [
+        ["Variedad", s.variedad || "-"],
+        ["Densidad", s.densidad ? `${s.densidad} ${s.densidadUnidad||""}` : "-"],
+        ["Fertilizante a la siembra", s.fertilizante || "-"],
+        ["Kg/ha fertilizante", s.kgFertilizante || "-"],
+        ["Inoculante", s.inoculante || "-"],
+        ["Insecticida", s.insecticida || "-"]
+      ];
+      doc.setFontSize(11);
+      filas.forEach(([label, val]) => {
+        doc.setFont(undefined, "bold"); doc.text(label + ":", 14, y);
+        doc.setFont(undefined, "normal"); doc.text(String(val), 80, y);
+        y += 7;
+      });
+    } else {
+      const headers = ["N°", "Producto", "Dosis", "Unidad", "Total"];
+      const colX = [14, 28, 95, 130, 160];
 
-    const headers = ["N°", "Producto", "Dosis", "Unidad", "Total"];
-    const colX = [14, 28, 95, 130, 160];
+      doc.setFillColor(212, 167, 58);
+      doc.rect(14, y, 182, 8, "F");
+      doc.setTextColor(43, 36, 32);
+      doc.setFontSize(10);
+      doc.setFont(undefined, "bold");
+      headers.forEach((h, i) => doc.text(h, colX[i] + 2, y + 5.5));
+      y += 8;
 
-    doc.setFillColor(212, 167, 58);
-    doc.rect(14, y, 182, 8, "F");
-    doc.setTextColor(43, 36, 32);
-    doc.setFontSize(10);
-    doc.setFont(undefined, "bold");
-    headers.forEach((h, i) => doc.text(h, colX[i] + 2, y + 5.5));
-    y += 8;
-
-    doc.setFont(undefined, "normal");
-    doc.setTextColor(20, 20, 20);
-    p.productos.forEach((prod, i) => {
-      const total = ((parseFloat(prod.dosis)||0) * (p.hectareas||0)).toFixed(2);
-      const vals = [(i+1) + "°", prod.nombre, String(prod.dosis), prod.unidad, total];
-      if(i % 2 === 1){
-        doc.setFillColor(242, 237, 227);
-        doc.rect(14, y, 182, 7, "F");
-        doc.setTextColor(20, 20, 20);
-      }
-      vals.forEach((v, j) => doc.text(String(v), colX[j] + 2, y + 5));
-      y += 7;
-    });
+      doc.setFont(undefined, "normal");
+      doc.setTextColor(20, 20, 20);
+      p.productos.forEach((prod, i) => {
+        const total = ((parseFloat(prod.dosis)||0) * (p.hectareas||0)).toFixed(2);
+        const vals = [(i+1) + "°", prod.nombre, String(prod.dosis), prod.unidad, total];
+        if(i % 2 === 1){
+          doc.setFillColor(242, 237, 227);
+          doc.rect(14, y, 182, 7, "F");
+          doc.setTextColor(20, 20, 20);
+        }
+        vals.forEach((v, j) => doc.text(String(v), colX[j] + 2, y + 5));
+        y += 7;
+      });
+    }
+  
+     
     doc.save(`Orden_${p.establecimientoNombre}${p.lote ? "_L"+p.lote : ""}_${p.fecha}.pdf`);
   }
   
