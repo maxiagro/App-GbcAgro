@@ -289,7 +289,14 @@ function Pedidos({state, addPedido, removePedido}){
   const [lote, setLote] = useState("");
   const [observacion, setObservacion] = useState("");
   const [hectareas, setHectareas] = useState("");
-  const [productos, setProductos] = useState([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
+  const [productos, setProductos] = useState([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);const [tipoLabor, setTipoLabor] = useState("aplicacion");
+  const [variedad, setVariedad] = useState("");
+  const [densidad, setDensidad] = useState("");
+  const [densidadUnidad, setDensidadUnidad] = useState("pl/ha");
+  const [fertilizante, setFertilizante] = useState("");
+  const [kgFertilizante, setKgFertilizante] = useState("");
+  const [inoculante, setInoculante] = useState("");
+  const [insecticida, setInsecticida] = useState("");
 
   const costoTotal = useMemo(() => {
     const ha = parseFloat(hectareas) || 0;
