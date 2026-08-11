@@ -326,15 +326,7 @@ function guardar(){
     }
     setLote(""); setObservacion(""); setHectareas("");
   }
-    const est = state.establecimientos.find(e => e.id === establecimientoId);
-    const ha = parseFloat(hectareas) || 0;
-    addPedido({
-      id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
-      lote, observacion, hectareas: ha, productos: productos.filter(p=>p.nombre),
-      costoTotal, costoPorHa: ha ? costoTotal/ha : 0
-    });
-    setLote(""); setObservacion(""); setHectareas(""); setProductos([{nombre:"", dosis:"", unidad:"l/ha", precio:""}]);
-  }
+   
 
  function exportarPDF(p){
     const doc = new window.jspdf.jsPDF();
