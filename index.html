@@ -296,7 +296,12 @@ function Pedidos({state, addPedido, removePedido}){
   const [fertilizante, setFertilizante] = useState("");
   const [kgFertilizante, setKgFertilizante] = useState("");
   const [inoculante, setInoculante] = useState("");
-  const [insecticida, setInsecticida] = useState("");
+  const [insecticida, setInsecticida] = useState("");const [cultivo, setCultivo] = useState("Maíz");
+  const [precioSemilla, setPrecioSemilla] = useState("");
+  const [precioFertilizante, setPrecioFertilizante] = useState("");
+  const [precioInoculante, setPrecioInoculante] = useState("");
+  const [precioInsecticida, setPrecioInsecticida] = useState("");
+  const [costoLabor, setCostoLabor] = useState("");
 
   const costoTotal = useMemo(() => {
     const ha = parseFloat(hectareas) || 0;
