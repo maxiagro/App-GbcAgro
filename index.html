@@ -480,16 +480,14 @@ if(p.tipoLabor === "siembra"){
                 <input value={variedad} onChange={e=>setVariedad(e.target.value)} placeholder="Ej: DM 46i20" />
                 <div className="row" style={{marginTop:8}}>
                   <div>
-                    <label>Densidad</label>
+                    <label>Densidad ({(cultivo==="Trigo"||cultivo==="Soja") ? "kg/ha" : "pl/ha"})</label>
                     <input type="number" value={densidad} onChange={e=>setDensidad(e.target.value)} placeholder="0" />
                   </div>
                   <div>
-                    <label>Unidad</label>
-                    <select value={densidadUnidad} onChange={e=>setDensidadUnidad(e.target.value)}>
-                      <option value="pl/ha">pl/ha</option>
-                      <option value="kg/ha">kg/ha</option>
-                    </select>
+                    <label>{(cultivo==="Trigo"||cultivo==="Soja") ? "Precio semilla (USD/tonelada)" : "Precio semilla (USD/bolsa)"}</label>
+                    <input type="number" value={precioSemilla} onChange={e=>setPrecioSemilla(e.target.value)} placeholder="0" />
                   </div>
+                </div>
                 </div>
                 <div className="row" style={{marginTop:8}}>
                   <div>
