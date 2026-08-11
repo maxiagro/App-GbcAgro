@@ -306,7 +306,21 @@ function Pedidos({state, addPedido, removePedido}){
   const costoTotal = useMemo(() => {
     const ha = parseFloat(hectareas) || 0;
     return productos.reduce((acc,p) => acc + (parseFloat(p.dosis)||0) * (parseFloat(p.precio)||0) * ha, 0);
-  }, [productos, hectareas]);
+  }, [productos, hectareas]);const costoTotalSiembra = useMemo(() => {
+    const ha = parseFloat(hectareas) || 0;
+    const dens = parseFloat(densidad) || 0;
+    const esGranoFino = cultivo === "Trigo" || cultivo === "Soja";
+    let costoSemillaHa = 0;
+    if(esGranoFino){
+      costoSemillaHa = (dens/1000) * (parseFloat(precioSemilla)||0);
+    } else {
+      const semillasPorBolsa = cultivo === "Girasol" ? 180000 : 80000;
+      costoSemillaHa = (dens / semillasPorBolsa) * (parseFloat(precioSemilla)||0);
+    }
+    const costoFertilizanteHa = ((parseFloat(kgFertilizante)||0)/1000) * (parseFloat(precioFertilizante)||0);
+    const porHa = costoSemillaHa + costoFertilizanteHa + (parseFloat(precioInoculante)||0) + (parseFloat(precioInsecticida)||0) + (parseFloat(costoLabor)||0);
+    return porHa * ha;
+  }, [hectareas, densidad, cultivo, precioSemilla, kgFertilizante, precioFertilizante, precioInoculante, precioInsecticida, costoLabor]);
 
 function guardar(){
     if(!establecimientoId || !hectareas){ alert("Completá establecimiento y hectáreas"); return; }
