@@ -489,7 +489,7 @@ if(p.tipoLabor === "siembra"){
                   </div>
                 </div>
                 </div>
-                <div className="row" style={{marginTop:8}}>
+               <div className="row" style={{marginTop:8}}>
                   <div>
                     <label>Fertilizante a la siembra</label>
                     <input value={fertilizante} onChange={e=>setFertilizante(e.target.value)} placeholder="Ej: MAP" />
@@ -499,15 +499,34 @@ if(p.tipoLabor === "siembra"){
                     <input type="number" value={kgFertilizante} onChange={e=>setKgFertilizante(e.target.value)} placeholder="0" />
                   </div>
                 </div>
+                <div style={{marginTop:8}}>
+                  <label>Precio fertilizante (USD/tonelada)</label>
+                  <input type="number" value={precioFertilizante} onChange={e=>setPrecioFertilizante(e.target.value)} placeholder="0" />
+                </div>
                 <div className="row" style={{marginTop:8}}>
                   <div>
                     <label>Inoculante</label>
                     <input value={inoculante} onChange={e=>setInoculante(e.target.value)} placeholder="Sí / No / producto" />
                   </div>
                   <div>
+                    <label>Costo inoculante (USD/ha)</label>
+                    <input type="number" value={precioInoculante} onChange={e=>setPrecioInoculante(e.target.value)} placeholder="0" />
+                  </div>
+                </div>
+                <div className="row" style={{marginTop:8}}>
+                  <div>
                     <label>Insecticida</label>
                     <input value={insecticida} onChange={e=>setInsecticida(e.target.value)} placeholder="Sí / No / producto" />
                   </div>
+                  <div>
+                    <label>Costo insecticida (USD/ha)</label>
+                    <input type="number" value={precioInsecticida} onChange={e=>setPrecioInsecticida(e.target.value)} placeholder="0" />
+                  </div>
+                </div>
+                <div style={{marginTop:8}}>
+                  <label>Costo de labor / sembradora (USD/ha)</label>
+                  <input type="number" value={costoLabor} onChange={e=>setCostoLabor(e.target.value)} placeholder="0" />
+                </div>
                 </div>
               </div>
             ) : (
