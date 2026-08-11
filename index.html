@@ -470,7 +470,13 @@ if(p.tipoLabor === "siembra"){
             </div>
             {tipoLabor === "siembra" ? (
               <div style={{marginTop:8}}>
-                <label>Variedad</label>
+               <label>Cultivo</label>
+                <select value={cultivo} onChange={e=>setCultivo(e.target.value)}>
+                  <option value="Maíz">Maíz</option>
+                  <option value="Girasol">Girasol</option>
+                  <option value="Trigo">Trigo</option>
+                  <option value="Soja">Soja</option>
+                </select> <label>Variedad</label>
                 <input value={variedad} onChange={e=>setVariedad(e.target.value)} placeholder="Ej: DM 46i20" />
                 <div className="row" style={{marginTop:8}}>
                   <div>
