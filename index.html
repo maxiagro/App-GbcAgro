@@ -330,10 +330,10 @@ function guardar(){
       addPedido({
         id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
         lote, observacion, hectareas: ha, tipoLabor: "siembra",
-        productos: [], costoTotal: 0, costoPorHa: 0,
-        siembra: { variedad, densidad, densidadUnidad, fertilizante, kgFertilizante, inoculante, insecticida }
+       productos: [], costoTotal: costoTotalSiembra, costoPorHa: ha ? costoTotalSiembra/ha : 0, 
+       siembra: { cultivo, variedad, densidad, densidadUnidad: (cultivo==="Trigo"||cultivo==="Soja") ? "kg/ha" : "pl/ha", fertilizante, kgFertilizante, inoculante, insecticida, precioSemilla, precioFertilizante, precioInoculante, precioInsecticida, costoLabor }
       });
-      setVariedad(""); setDensidad(""); setFertilizante(""); setKgFertilizante(""); setInoculante(""); setInsecticida("");
+      setVariedad(""); setDensidad(""); setFertilizante(""); setKgFertilizante(""); setInoculante(""); setInsecticida("");setPrecioSemilla(""); setPrecioFertilizante(""); setPrecioInoculante(""); setPrecioInsecticida(""); setCostoLabor("");
     } else {
       addPedido({
         id: uid(), fecha, establecimientoId, establecimientoNombre: est?.nombre || "",
