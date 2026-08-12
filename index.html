@@ -579,7 +579,7 @@ function Balance({state}){
     return map;
   }, [state.pedidos]);
 
-  const totalGeneral = state.pedidos.reduce((a,p)=>a+p.costoTotal, 0);
+  const totalGeneral = state.pedidos.reduce((a,p)=>a+p.costoTotal, 0);const totalHaGeneral = state.pedidos.reduce((a,p)=>a+p.hectareas, 0);
 
   return (
     <div>
