@@ -1,4 +1,4 @@
-const CACHE = "campo-app-v2";
+const CACHE = "campo-app-v3";
 const ASSETS = [
   "./",
   "./index.html",
