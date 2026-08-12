@@ -534,11 +534,11 @@ if(p.tipoLabor === "siembra"){
                 <ProductoForm productos={productos} setProductos={setProductos} />
               </div>
             )}
-            {tipoLabor === "aplicacion" && (
-              <div className="balance-total" style={{marginTop:12}}>
-                <span>Costo total</span>
-                <span className="num mono">{fmtUSD(costoTotal)}</span>
-              </div>
+            <div className="balance-total" style={{marginTop:12}}>
+              <span>Costo total</span>
+              <span className="num mono">{fmtUSD(tipoLabor === "siembra" ? costoTotalSiembra : costoTotal)}</span>
+            </div>
+              
             )}
             <button className="btn-primary" style={{width:"100%"}} onClick={guardar}>Guardar pedido</button>
           </div>
