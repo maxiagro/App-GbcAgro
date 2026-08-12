@@ -586,6 +586,9 @@ function Balance({state}){
       <div className="balance-total">
         <span>Total general</span>
         <span className="num mono">{fmtUSD(totalGeneral)}</span>
+      </div><div className="balance-total" style={{marginTop:4}}>
+        <span>Total USD/ha</span>
+        <span className="num mono">{fmtUSD(totalHaGeneral ? totalGeneral/totalHaGeneral : 0)}</span>
       </div>
       <div className="card">
         <h3>Por establecimiento</h3>
