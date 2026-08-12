@@ -468,15 +468,16 @@ if(p.tipoLabor === "siembra"){
               <button type="button" className={tipoLabor==="aplicacion" ? "btn-primary" : "btn-ghost"} onClick={()=>setTipoLabor("aplicacion")}>Aplicación</button>
               <button type="button" className={tipoLabor==="siembra" ? "btn-primary" : "btn-ghost"} onClick={()=>setTipoLabor("siembra")}>Siembra</button>
             </div>
-            {tipoLabor === "siembra" ? (
+           {tipoLabor === "siembra" ? (
               <div style={{marginTop:8}}>
-               <label>Cultivo</label>
+                <label>Cultivo</label>
                 <select value={cultivo} onChange={e=>setCultivo(e.target.value)}>
                   <option value="Maíz">Maíz</option>
                   <option value="Girasol">Girasol</option>
                   <option value="Trigo">Trigo</option>
                   <option value="Soja">Soja</option>
-                </select> <label>Variedad</label>
+                </select>
+                <label style={{marginTop:8, display:"block"}}>Variedad</label>
                 <input value={variedad} onChange={e=>setVariedad(e.target.value)} placeholder="Ej: DM 46i20" />
                 <div className="row" style={{marginTop:8}}>
                   <div>
@@ -488,8 +489,7 @@ if(p.tipoLabor === "siembra"){
                     <input type="number" value={precioSemilla} onChange={e=>setPrecioSemilla(e.target.value)} placeholder="0" />
                   </div>
                 </div>
-                </div>
-               <div className="row" style={{marginTop:8}}>
+                <div className="row" style={{marginTop:8}}>
                   <div>
                     <label>Fertilizante a la siembra</label>
                     <input value={fertilizante} onChange={e=>setFertilizante(e.target.value)} placeholder="Ej: MAP" />
@@ -527,7 +527,6 @@ if(p.tipoLabor === "siembra"){
                   <label>Costo de labor / sembradora (USD/ha)</label>
                   <input type="number" value={costoLabor} onChange={e=>setCostoLabor(e.target.value)} placeholder="0" />
                 </div>
-                </div>
               </div>
             ) : (
               <div style={{marginTop:4}}>
@@ -538,8 +537,6 @@ if(p.tipoLabor === "siembra"){
               <span>Costo total</span>
               <span className="num mono">{fmtUSD(tipoLabor === "siembra" ? costoTotalSiembra : costoTotal)}</span>
             </div>
-              
-            )}
             <button className="btn-primary" style={{width:"100%"}} onClick={guardar}>Guardar pedido</button>
           </div>
         )}
